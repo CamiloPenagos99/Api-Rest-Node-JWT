@@ -18,6 +18,11 @@ const userSchema = mongoose.Schema({
         required: true,
         minlength: 6
     },
+    role: {
+        type: String,
+        default: 'user', //admin
+        minlength: 4
+    },
     date: {
         type: Date,
         default: Date.now

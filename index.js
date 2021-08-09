@@ -17,13 +17,22 @@ mongoose.connect(uri,
 .then(() => console.log('Base de datos conectada'))
 .catch(e => console.log('error db:', e))
 
+//importar middleware
 
+const auth =  require('./mid/auth');
+const role =  require('./mid/authorization');
 // import routes
 const AuthRoute = require('./routes/routes');
+//importar ruta
+const dash = require('./routes/dashboard');
+
 
 
 // route middlewares
 app.use('/api/user', AuthRoute);
+
+//middleware
+app.use('/api/user/dash',role,auth,dash); //ruta protegida con autorizacion y autenticacion
 
 app.get('/', (req, res) => {
     res.json({

@@ -2,11 +2,14 @@ const router = require('express').Router(); //manejador de rutas
 const User = require('../models/User') //eschema de mongo
 const Joi = require("@hapi/joi"); //validaciones de login
 const bcrypt = require ("bcrypt");
+const jwt = require("jsonwebtoken"); //importar jwt
 
 const schemaRegister = Joi.object({ //validar en hapi
     name: Joi.string().min(6).max(255).required(),
     email: Joi.string().min(6).max(255).required().email(),
-    password: Joi.string().min(6).max(1024).required()
+    password: Joi.string().min(6).max(1024).required(),
+    role: Joi.string().min(4).max(255).required(),
+
 })
 
 const schemaLogin = Joi.object({ //validar en hapi
@@ -41,10 +44,16 @@ router.post('/login', async (req,res)=>{
         return res.status(400).json({error: true, msg: "Contraseña errornea"});
     }
 
+    //json web token
+    const token = jwt.sign({ 
+        name: user.name, //payload
+        id: user._id
+    }, process.env.TOKEN_SECRET) //token 
+
     //Login correcto
-    res.json({
+    res.header('auth-token', token).json({
         error: null,
-        msg: "Bienvenido..."
+        data: {token}
     })
     
 })
